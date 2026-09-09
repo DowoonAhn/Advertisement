@@ -1,4 +1,4 @@
-import { Banknote, LineChart, Settings2 } from "lucide-react";
+import { Banknote, Layers, Settings2 } from "lucide-react";
 import { Reveal } from "@/components/site/reveal";
 import { krw } from "@/lib/utils";
 
@@ -14,9 +14,9 @@ const POINTS = [
     body: "지금까지 CPO가 가져가던 매출을 시설 주인이 직접 받습니다. 수익 사업으로 전환할 수 있습니다.",
   },
   {
-    icon: LineChart,
-    title: "사용량만 받쳐 주면 흑자 구조",
-    body: "5기 운영 · 월 500kWh/기 · 320원 모델 기준, 연간 이익 약 440만 원. 시뮬레이터에서 바로 확인해 보세요.",
+    icon: Layers,
+    title: "5기든 50기든 같은 방식",
+    body: "충전기 10기까지는 무료, 이후는 1기당 월 1만 원으로 그대로 확장됩니다. 규모가 커져도 운영 방식은 바뀌지 않습니다.",
   },
 ];
 

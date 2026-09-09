@@ -1,33 +1,43 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { useServerFn } from "@tanstack/react-start";
 import { X } from "lucide-react";
 import { useState, type ComponentProps, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useInquiry } from "@/lib/inquiry";
-
-const STORAGE_KEY = "evcloud-inquiries";
+import { submitInquiry, useInquiry } from "@/lib/inquiry";
 
 export function InquiryDialog() {
   const open = useInquiry((s) => s.open);
   const setOpen = useInquiry((s) => s.setOpen);
   const [sending, setSending] = useState(false);
+  const submit = useServerFn(submitInquiry);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
+    const entries = Object.fromEntries(new FormData(form).entries());
     setSending(true);
-    const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]") as unknown[];
-    prev.push({ ...data, at: new Date().toISOString() });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prev));
-    window.setTimeout(() => {
-      setSending(false);
+    try {
+      await submit({
+        data: {
+          name: String(entries.name ?? ""),
+          phone: String(entries.phone ?? ""),
+          site: String(entries.site ?? ""),
+          kind: String(entries.kind ?? ""),
+          chargers: String(entries.chargers ?? ""),
+          note: String(entries.note ?? ""),
+        },
+      });
       setOpen(false);
       form.reset();
       toast.success("도입 문의가 접수되었습니다. 담당자가 연락드립니다.");
-    }, 420);
+    } catch {
+      toast.error("접수에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (

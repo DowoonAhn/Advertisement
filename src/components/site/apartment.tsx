@@ -1,7 +1,7 @@
-import { Eye, ShieldCheck, Wallet } from "lucide-react";
+import { ArrowRight, Eye, ShieldCheck, Wallet } from "lucide-react";
 import { Reveal } from "@/components/site/reveal";
 import { DashboardPreview } from "@/components/site/dashboard-preview";
-import { RatePlayground } from "@/components/site/rate-playground";
+import { krw } from "@/lib/utils";
 
 const POINTS = [
   {
@@ -77,20 +77,24 @@ export function Apartment() {
       </div>
 
       <div className="border-t border-ink/8">
-        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-2 md:py-20">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
           <Reveal>
-            <p className="text-[11px] tracking-[0.18em] text-ember uppercase">입주민 요금 체험</p>
-            <h3 className="mt-3 font-display text-2xl tracking-tight">
-              한 달 충전비,
-              <br />
-              요금을 낮추면 이렇게 달라집니다.
-            </h3>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-ink/65">
-              월 200kWh를 쓰는 입주민 기준입니다. 슬라이더로 단지가 정하는 kWh당 요금을 바꿔 보세요.
-            </p>
-          </Reveal>
-          <Reveal delay={80}>
-            <RatePlayground />
+            <div className="flex flex-col items-start justify-between gap-6 rounded-2xl bg-paper-2 p-6 sm:flex-row sm:items-center md:p-8">
+              <div>
+                <p className="text-[11px] tracking-[0.18em] text-ember uppercase">입주민 요금 체험</p>
+                <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink/70">
+                  월 200kWh 기준, 단지가 요금을 200원/kWh로 낮추면 시중 350원 대비{" "}
+                  <span className="font-medium text-ink">{krw(30_000)}</span>를 아낍니다.
+                </p>
+              </div>
+              <a
+                href="#sim"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition-opacity hover:opacity-90"
+              >
+                직접 요금 계산해 보기
+                <ArrowRight className="size-3.5" />
+              </a>
+            </div>
           </Reveal>
         </div>
       </div>
