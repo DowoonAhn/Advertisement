@@ -111,7 +111,15 @@ function main(argv) {
     process.exit(2);
   }
   const env = mergeAppEnv(readAppEnv(projectRoot()), process.env);
-  const child = spawn(command, args, { stdio: "inherit", env });
+  // Windows only: without a shell, spawn() can't resolve a PATH entry that's
+  // really `<command>.cmd` (every node_modules/.bin shim on win32) and fails
+  // with ENOENT. POSIX already resolves the bare name via PATH, so leave it
+  // shell-less there — this script's signal handling below assumes it.
+  const child = spawn(command, args, {
+    stdio: "inherit",
+    env,
+    shell: process.platform === "win32",
+  });
   // The dev server is long-running and is stopped by signalling this wrapper.
   for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
     process.on(signal, () => child.kill(signal));

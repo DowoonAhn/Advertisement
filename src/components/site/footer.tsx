@@ -9,7 +9,7 @@ export function Footer() {
           <p className="mt-3 text-sm text-fog">미래 에너지 생활을 설계합니다.</p>
         </div>
         <p className="text-xs text-fog">
-          타이드테크놀로지 · evCloud 2.0 사업모델 정책안 기반 소개 페이지
+          타디스테크놀로지 · evCloud 2.0 사업모델 정책안 기반 소개 페이지
         </p>
       </div>
     </footer>

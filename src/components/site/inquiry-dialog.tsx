@@ -1,33 +1,44 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { useServerFn } from "@tanstack/react-start";
 import { X } from "lucide-react";
 import { useState, type ComponentProps, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useInquiry } from "@/lib/inquiry";
-
-const STORAGE_KEY = "evcloud-inquiries";
+import { submitInquiry, useInquiry } from "@/lib/inquiry";
 
 export function InquiryDialog() {
   const open = useInquiry((s) => s.open);
   const setOpen = useInquiry((s) => s.setOpen);
   const [sending, setSending] = useState(false);
+  const submit = useServerFn(submitInquiry);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
+    const entries = Object.fromEntries(new FormData(form).entries());
     setSending(true);
-    const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]") as unknown[];
-    prev.push({ ...data, at: new Date().toISOString() });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prev));
-    window.setTimeout(() => {
-      setSending(false);
+    try {
+      await submit({
+        data: {
+          name: String(entries.name ?? ""),
+          phone: String(entries.phone ?? ""),
+          site: String(entries.site ?? ""),
+          kind: String(entries.kind ?? ""),
+          chargers: String(entries.chargers ?? ""),
+          note: String(entries.note ?? ""),
+        },
+      });
       setOpen(false);
       form.reset();
       toast.success("도입 문의가 접수되었습니다. 담당자가 연락드립니다.");
-    }, 420);
+    } catch (err) {
+      console.error("[inquiry] submit failed:", err);
+      toast.error("접수에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -53,9 +64,16 @@ export function InquiryDialog() {
             </Dialog.Close>
           </div>
           <form className="grid gap-3.5" onSubmit={onSubmit}>
-            <Field name="name" label="이름" required placeholder="홍길동" />
-            <Field name="phone" label="연락처" required placeholder="010-0000-0000" type="tel" />
-            <Field name="site" label="시설명" placeholder="○○아파트 / ○○빌딩" />
+            <Field name="name" label="이름" required placeholder="홍길동" maxLength={100} />
+            <Field
+              name="phone"
+              label="연락처"
+              required
+              placeholder="010-0000-0000"
+              type="tel"
+              maxLength={30}
+            />
+            <Field name="site" label="시설명" placeholder="○○아파트 / ○○빌딩" maxLength={200} />
             <div className="grid gap-1.5">
               <Label htmlFor="kind">시설 유형</Label>
               <select
@@ -71,13 +89,14 @@ export function InquiryDialog() {
                 <option>기타</option>
               </select>
             </div>
-            <Field name="chargers" label="충전기 대수" placeholder="예: 8" type="number" />
+            <Field name="chargers" label="충전기 대수" placeholder="예: 8" type="number" maxLength={10} />
             <div className="grid gap-1.5">
               <Label htmlFor="note">문의 내용</Label>
               <textarea
                 id="note"
                 name="note"
                 rows={3}
+                maxLength={2000}
                 className="resize-none rounded-lg bg-ink-3 px-3.5 py-2.5 text-sm text-paper placeholder:text-fog shadow-border outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange"
                 placeholder="원하시는 요금 모델이나 현재 운영 방식을 알려주세요."
               />
