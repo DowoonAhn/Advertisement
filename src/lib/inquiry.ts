@@ -13,12 +13,12 @@ export const useInquiry = create<InquiryStore>((set) => ({
 }));
 
 const inquirySchema = z.object({
-  name: z.string().trim().min(1),
-  phone: z.string().trim().min(1),
-  site: z.string().optional().default(""),
-  kind: z.string().trim().min(1),
-  chargers: z.string().optional().default(""),
-  note: z.string().optional().default(""),
+  name: z.string().trim().min(1).max(100),
+  phone: z.string().trim().min(1).max(30),
+  site: z.string().max(200).optional().default(""),
+  kind: z.string().trim().min(1).max(50),
+  chargers: z.string().max(10).optional().default(""),
+  note: z.string().max(2000).optional().default(""),
 });
 
 /**

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { cn, krw } from "@/lib/utils";
 
 const RATE = 250;
+const TICK_MS = 2200;
 
 const BASE_CHARGERS = [
   { id: "A-01", state: "충전중", kwh: 18.4, tone: "live" },
@@ -11,24 +12,37 @@ const BASE_CHARGERS = [
   { id: "B-02", state: "대기", kwh: 0, tone: "fog" },
 ] as const;
 
-export function DashboardPreview({ className }: { className?: string }) {
-  const [chargers, setChargers] = useState<Array<{ id: string; state: string; kwh: number; tone: string }>>(
-    () => BASE_CHARGERS.map((c) => ({ ...c })),
-  );
+function currentTick() {
+  return Math.floor(Date.now() / TICK_MS);
+}
 
-  // Purely cosmetic tick so the "실시간" label on a marketing screenshot
-  // isn't a lie — nudges only the chargers already marked "충전중".
+/**
+ * Deterministic function of a shared wall-clock tick, not accumulated
+ * per-instance state — so the two DashboardPreview instances mounted at
+ * once (mobile/desktop breakpoints in apartment.tsx) always agree, and the
+ * number oscillates around `base` instead of growing without bound.
+ */
+function liveKwh(base: number, seed: number, tick: number) {
+  if (base <= 0) return 0;
+  const wave = (Math.sin(tick * 0.35 + seed) + 1) * 0.4; // 0..0.8
+  return Math.round((base + wave) * 10) / 10;
+}
+
+export function DashboardPreview({ className }: { className?: string }) {
+  // Seed with a fixed tick (0) so server and first client render match —
+  // Date.now() only enters after mount, avoiding a hydration mismatch.
+  const [tick, setTick] = useState(0);
+
   useEffect(() => {
-    const id = window.setInterval(() => {
-      setChargers((prev) =>
-        prev.map((c) =>
-          c.tone === "live" ? { ...c, kwh: Math.round((c.kwh + Math.random() * 0.3) * 10) / 10 } : c,
-        ),
-      );
-    }, 2200);
+    setTick(currentTick());
+    const id = window.setInterval(() => setTick(currentTick()), TICK_MS);
     return () => window.clearInterval(id);
   }, []);
 
+  const chargers = BASE_CHARGERS.map((c, i) => ({
+    ...c,
+    kwh: c.tone === "live" ? liveKwh(c.kwh, i, tick) : c.kwh,
+  }));
   const totalKwh = chargers.reduce((sum, c) => sum + c.kwh, 0);
 
   return (

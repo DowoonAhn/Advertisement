@@ -55,6 +55,16 @@ export function Simulator() {
     setModel(match?.id ?? "custom");
   }
 
+  // Keep start <= target at the state level so each slider's thumb always
+  // matches its own label — no separate "safe" values needed for rendering.
+  function onStartKwh(next: number) {
+    setStartKwh(Math.min(next, targetKwh));
+  }
+
+  function onTargetKwh(next: number) {
+    setTargetKwh(Math.max(next, startKwh));
+  }
+
   const result = useMemo(
     () => simulate({ chargers, kwh, rate, includePg }),
     [chargers, kwh, rate, includePg],
@@ -64,19 +74,17 @@ export function Simulator() {
     [chargers, rate, includePg],
   );
 
-  const safeStart = Math.min(startKwh, targetKwh);
-  const safeTarget = Math.max(startKwh, targetKwh);
   const { points, turnMonth, recoverMonth } = useMemo(
     () =>
       rampTimeline({
         chargers,
         rate,
-        startKwh: safeStart,
-        targetKwh: safeTarget,
+        startKwh,
+        targetKwh,
         rampMonths,
         includePg: false,
       }),
-    [chargers, rate, safeStart, safeTarget, rampMonths],
+    [chargers, rate, startKwh, targetKwh, rampMonths],
   );
   const turn = turnMonth ? points[turnMonth - 1] : null;
   const last = points[points.length - 1];
@@ -162,23 +170,23 @@ export function Simulator() {
                 </Control>
               ) : (
                 <>
-                  <Control label="시작 충전량 / 1기" value={`${safeStart.toLocaleString("ko-KR")} kWh`}>
+                  <Control label="시작 충전량 / 1기" value={`${startKwh.toLocaleString("ko-KR")} kWh`}>
                     <Slider
                       min={100}
                       max={500}
                       step={10}
                       value={[startKwh]}
-                      onValueChange={(v) => setStartKwh(v[0] ?? 100)}
+                      onValueChange={(v) => onStartKwh(v[0] ?? 100)}
                       aria-label="시작 충전량"
                     />
                   </Control>
-                  <Control label="목표 충전량 / 1기" value={`${safeTarget.toLocaleString("ko-KR")} kWh`}>
+                  <Control label="목표 충전량 / 1기" value={`${targetKwh.toLocaleString("ko-KR")} kWh`}>
                     <Slider
                       min={200}
                       max={800}
                       step={10}
                       value={[targetKwh]}
-                      onValueChange={(v) => setTargetKwh(v[0] ?? 450)}
+                      onValueChange={(v) => onTargetKwh(v[0] ?? 450)}
                       aria-label="목표 충전량"
                     />
                   </Control>
