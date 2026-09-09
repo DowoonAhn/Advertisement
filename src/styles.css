@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans KR", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Noto Serif KR", "IBM Plex Sans KR", serif;
+
+  --color-ink: #0b0d0c;
+  --color-ink-2: #141716;
+  --color-ink-3: #1c211f;
+  --color-paper: #f3efe6;
+  --color-paper-2: #e7e1d4;
+  --color-mist: #c8c4b8;
+  --color-fog: #8a918c;
+  --color-orange: #ff7a3a;
+  --color-ember: #b54716;
+  --color-danger: #c45b48;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  --shadow-border: 0 0 0 1px rgb(255 255 255 / 0.08);
+  --shadow-border-hover: 0 0 0 1px rgb(255 255 255 / 0.14);
+  --shadow-paper: 0 0 0 1px rgb(11 13 12 / 0.06), 0 1px 2px -1px rgb(11 13 12 / 0.06),
+    0 2px 4px 0 rgb(11 13 12 / 0.04);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: var(--color-orange);
+    color: var(--color-ink);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(4px);
+  transition:
+    opacity 500ms var(--ease-out-soft),
+    transform 500ms var(--ease-out-soft),
+    filter 500ms var(--ease-out-soft);
+}
+
+.reveal-on {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.framed {
+  outline: 1px solid rgb(255 255 255 / 0.1);
+  outline-offset: -1px;
+}
+
+.framed-paper {
+  outline: 1px solid rgb(11 13 12 / 0.08);
+  outline-offset: -1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "evCloud 2.0 — 요금의 주권",
+      "hasCanvas": false,
+      "bodyTextLen": 3023,
+      "bodyTextHash": "8f8ef38cb641668d23ff60031a678c027e29a490ed7c7b614784fab9bc333572",
+      "bodyTextPrefix": "evCloud 2.0 문제 공용주택 상업시설 시뮬레이터 시작 도입 문의 01 문제 02 공용주택 03 상업시설 04",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "evCloud 2.0 — 요금의 주권",
+      "hasCanvas": false,
+      "bodyTextLen": 2964,
+      "bodyTextHash": "7c15b481e4d7015a760087487fc79079530bd7ebd9caa61c827fff35439a10d0",
+      "bodyTextPrefix": "evCloud 2.0 도입 문의 01 문제제기 전기차 충전기, 왜 항상 남이 정한 비싼 요금으로 써야 할까요? 이제",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
